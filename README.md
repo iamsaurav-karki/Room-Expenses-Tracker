@@ -8,15 +8,23 @@
 - **Roommate Management** - Add/remove roommates who can participate in expense splitting
 
 ### Tech Stack
-- Frontend: React.js with Vite, Tailwind CSS, React Router, Recharts
-- Backend: Node.js with Express.js
-- Database: PostgreSQL 16
-- ORM: Prisma.js
-- Containerization: Docker Compose
-- Prerequisites
-- Node.js (v18 or higher)
-- Docker and Docker Compose
-- npm or yarn
+### Frontend
+- **React 18** - UI library
+- **React Router v6** - Client-side routing
+- **Vite** - Build tool and dev server
+- **Axios** - HTTP client
+- **Recharts** - Data visualization
+- **Tailwind CSS** - Utility-first CSS framework
+- **date-fns** - Date manipulation
+- **xlsx** - Excel export functionality
+
+### Backend
+- **Node.js** - Runtime environment
+- **Express** - Web framework
+- **Prisma ORM** - Database ORM
+- **PostgreSQL** - Database
+- **JWT** - Authentication
+- **express-validator** - Input validation
 
 ### Setup Instructions
 
@@ -40,3 +48,6 @@ VITE_API_URL=http://localhost:5000/api
 
 docker compose up -d
 ```
+
+
+
