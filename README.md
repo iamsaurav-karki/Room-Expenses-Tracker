@@ -23,5 +23,20 @@
 ```
 git clone <repo>
 cd <repo>
+create .env with values:
+
+# Database Configuration
+POSTGRES_USER=your_username
+POSTGRES_PASSWORD=your_password
+POSTGRES_DB=room_expense_db
+
+# Backend Configuration
+ADMIN_USERNAME=create_username
+ADMIN_PASSWORD=create_password
+JWT_SECRET=your_jwt
+
+# Frontend Configuration
+VITE_API_URL=http://localhost:5000/api
+
 docker compose up -d
 ```
