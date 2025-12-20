@@ -3,12 +3,14 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
+import Toast from "../components/Toast"
 
 const Login = () => {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showToast, setShowToast] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
 
@@ -22,9 +24,9 @@ const Login = () => {
     console.log("[v0] Login result:", result)
 
     if (result.success) {
-      console.log("[v0] Login successful, waiting for state sync...")
-      // Wait for auth state to fully sync
-      await new Promise((resolve) => setTimeout(resolve, 200))
+      setShowToast(true)
+      console.log("[v0] Login successful, showing toast...")
+      await new Promise((resolve) => setTimeout(resolve, 800))
       console.log("[v0] Navigating to dashboard")
       navigate("/", { replace: true })
     } else {
@@ -35,6 +37,10 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
+      {showToast && (
+        <Toast message="Login successful! Redirecting..." type="success" onClose={() => setShowToast(false)} />
+      )}
+
       {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl"></div>
