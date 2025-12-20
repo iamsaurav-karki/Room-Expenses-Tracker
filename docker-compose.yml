@@ -1,3 +1,72 @@
+# version: "3.9"
+#
+# services:
+#   postgres:
+#     image: postgres:16
+#     container_name: room-expense-postgres
+#     restart: unless-stopped
+#     environment:
+#       POSTGRES_USER: room_user
+#       POSTGRES_PASSWORD: room_password
+#       POSTGRES_DB: room_expense_db
+#     ports:
+#       - "5432:5432"
+#     volumes:
+#       - db_data:/var/lib/postgresql/data
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U room_user -d room_expense_db"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#     networks:
+#       - room-expense-network
+#
+#   backend:
+#     build:
+#       context: ./backend
+#       dockerfile: Dockerfile
+#     container_name: room-expense-backend
+#     restart: unless-stopped
+#     ports:
+#       - "5000:5000"
+#     environment:
+#       DATABASE_URL: postgresql://room_user:room_password@postgres:5432/room_expense_db?schema=public
+#       PORT: 5000
+#       NODE_ENV: production
+#       ADMIN_USERNAME: expense_admin
+#       ADMIN_PASSWORD: "@Expense123"
+#       JWT_SECRET: OInftwCJkT3YUNUasmU6kaoviT3WqLQrSwgleakMyKQ
+#     depends_on:
+#       postgres:
+#         condition: service_healthy
+#     networks:
+#       - room-expense-network
+#     volumes:
+#       - ./backend:/app
+#       - /app/node_modules
+#
+#   frontend:
+#     build:
+#       context: ./frontend
+#       dockerfile: Dockerfile
+#       args:
+#         VITE_API_URL: http://localhost:5000/api
+#     container_name: room-expense-frontend
+#     restart: unless-stopped
+#     ports:
+#       - "3000:80"
+#     depends_on:
+#       - backend
+#     networks:
+#       - room-expense-network
+#
+# networks:
+#   room-expense-network:
+#     driver: bridge
+#
+# volumes:
+#   db_data:
+
 version: "3.9"
 
 services:
@@ -6,19 +75,66 @@ services:
     container_name: room-expense-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: room_user
-      POSTGRES_PASSWORD: room_password
-      POSTGRES_DB: room_expense_db
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${POSTGRES_USER:-room_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-room_expense_db}
+    # Remove port exposure in production - only internal access
+    # ports:
+    #   - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U room_user -d room_expense_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-room_user} -d ${POSTGRES_DB:-room_expense_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - room-expense-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: room-expense-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-room_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-room_expense_db}?schema=public
+      PORT: 5000
+      NODE_ENV: production
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - room-expense-network
+    # Remove volumes in production
+    # volumes:
+    #   - ./backend:/app
+    #   - /app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Use environment variable for API URL
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:5000/api}
+    container_name: room-expense-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - room-expense-network
+
+networks:
+  room-expense-network:
+    driver: bridge
 
 volumes:
   db_data:

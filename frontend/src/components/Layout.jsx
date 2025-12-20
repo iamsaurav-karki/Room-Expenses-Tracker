@@ -179,7 +179,7 @@ const Layout = ({ children }) => {
                   title={`Logout ${user?.username || ""}`}
                 >
                   <span>🚪</span>
-                  <span className="hidden sm:inline">Logout</span>
+                  <span>Logout</span>
                 </button>
               </div>
             )}
