@@ -44,7 +44,12 @@ ADMIN_PASSWORD=create_password
 JWT_SECRET=your_jwt
 
 # Frontend Configuration
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://yourdomain/api
+
+## For production
+/frotend/.env.production
+VITE_API_URL=https://yourdomain/api
+
 
 docker compose up -d
 ```
