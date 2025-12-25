@@ -31,7 +31,7 @@
 ```
 git clone <repo>
 cd <repo>
-create .env with values:
+create .env in root with values:
 
 # Database Configuration
 POSTGRES_USER=your_username
@@ -44,6 +44,10 @@ ADMIN_PASSWORD=create_password
 JWT_SECRET=your_jwt
 
 # Frontend Configuration
+VITE_API_URL=http://localhost:5000/api
+
+create .env in /frontend directory:
+# Frontend build API URL (used during build)
 VITE_API_URL=http://localhost:5000/api
 
 docker compose up -d
