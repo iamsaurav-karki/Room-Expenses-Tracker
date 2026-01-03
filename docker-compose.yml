@@ -68,7 +68,6 @@
 #   db_data:
 
 version: "3.9"
-
 services:
   postgres:
     image: postgres:16
@@ -78,9 +77,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-room_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB:-room_expense_db}
-    # Remove port exposure in production - only internal access
-    # ports:
-    #   - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -94,7 +90,6 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: room-expense-backend
     restart: unless-stopped
     ports:
@@ -111,18 +106,12 @@ services:
         condition: service_healthy
     networks:
       - room-expense-network
-    # Remove volumes in production
-    # volumes:
-    #   - ./backend:/app
-    #   - /app/node_modules
 
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
       args:
-        # Use environment variable for API URL
-        VITE_API_URL: ${VITE_API_URL:-http://localhost:5000/api}
+        VITE_API_URL: http://localhost:5000/api
     container_name: room-expense-frontend
     restart: unless-stopped
     ports:
@@ -138,3 +127,4 @@ networks:
 
 volumes:
   db_data:
+
